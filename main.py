@@ -2,7 +2,7 @@ import math
 
 
 def getData():
-    with open("exemplaires/5_10_0.txt") as f:
+    with open("exemplaires/10_20_0.txt") as f:
         lines = f.readlines()
         matrix = []
         i=0
@@ -22,53 +22,90 @@ def getData():
                     tempArray.append(cleanLine[i])
                 matrix.append(tempArray)
             i = i+1
-
-        print(matrix)
         return l, h, matrix
 
-def getVotes(matrix, h, l):
-    votesVerts = 0
-    votesJaunes = 0
-    for i in range(0, h):
-        for j in range(0, l):
-            if matrix[i][j] > 50 :
-                votesVerts = votesVerts + 1
-            else:
-                votesJaunes = votesJaunes + 1
-    return votesVerts, votesJaunes
-
-def calculate_manhattan_distance(point1, point2) :     
-    return sum(abs(value1 - value2) for value1, value2 in zip(point1, point2))
+def calculate_manhattan_distance(municipality1, municipality2) :
+    return (abs(municipality2["x"] - municipality1["x"]) + abs(municipality2["y"] - municipality1["y"]))
     # point 1 = [1,3]
 
+def getManhathanValue(n, m):
+    return math.ceil(n/(2*m))
 
-#MAIN
+def isMunicipalityValid(circonscriptionArray, newMinicipality, manhathanLimit):
+    isValid = True
+    for i in circonscriptionArray:
+            if calculate_manhattan_distance(i, newMinicipality) > manhathanLimit:
+                isValid = False
+                break
+
+    return isValid
 
 l, h, matrix  = getData()
 
 nbMuni = l*h #n
-nbCircon = 5 #m
+nbCircon = 10 #m
 
-votesVerts, votesJaunes = getVotes(matrix, h, l)
+
+manhathanLimit = math.ceil(nbMuni/(2*nbCircon))
+print("manhathanLimit")
+print(manhathanLimit)
+print("manhathanLimit")
 
 k_min = math.floor(nbMuni/nbCircon)
 k_max = math.ceil(nbMuni/nbCircon)
 
-# minWinsParCirconscriptions = nbMuni/nbCircon 
+circonscriptionSize = k_min
 
-#For i in range(k)
-#votes verts/k > .5
+configurations = []
+temp_circonscription = []
 
-dist = math.ceil(nbMuni/(2*nbCircon))
+for i in range(h):
+    for j in range(l):
+        
+        new_point = {
+                "x": j,
+                "y": i,
+                "votes": matrix[i][j]
+            }
 
-#aller chercher le minimum de vote possible right away
-#ensuite complet la circonscription avec des blancs
+        if len(temp_circonscription) == 0:
+            temp_circonscription.append(new_point)
+        else:
+            if isMunicipalityValid(temp_circonscription, new_point, manhathanLimit):
+                temp_circonscription.append(new_point)
+
+        #Circonscription is full, push it in configurations
+        if len(temp_circonscription) == circonscriptionSize:
+            configurations.append(temp_circonscription)
+            temp_circonscription = []
+
+test_point1 = {
+                "x": 9,
+                "y": 0,
+                "votes": 39
+            }
+
+test_point2 = {
+                "x": 1,
+                "y": 1,
+                "votes": 49
+            }
+print(calculate_manhattan_distance(test_point1, test_point2))
+
+print("Manhathan limit: ", manhathanLimit)
+print("Circonscription size: ", circonscriptionSize)
+print("Configurations: ")
+
+index = 0
+for i in range(h):
+    print("configuration:", index)
+    index = index + 1
+    for j in range(l):
+        print(configurations[i][j]["votes"])
+        
 
 
 
-
-print(l)
-print(h)
-print(matrix)
-print(votesVerts)
-print(votesJaunes)
+# print(l)
+# print(h)
+# print(matrix)

@@ -1,17 +1,4 @@
-Deux partis:
-VERT et JAUNE
-
-n : municiplaites carres de 100 habitants avec proportions de votes
-
-m (input): circonscriptions formes de k municapilites
-            where floor(n/m)<= k <= roof(n/m)
-
-dist: manhathan <= roof(n/2m)
-
-exemples:
-n=50
-
-10 x 20
+10 20
 98  4   90  2   24  76  20  23  2   39 
 49  87  27  77  2   11  41  96  50  61 
 85  76  21  3   92  46  25  54  9   37 
@@ -32,5 +19,3 @@ n=50
 85  37  94  36  14  82  89  18  51  49 
 37  49  31  8   97  8   51  36  87  79 
 78  41  96  11  33  95  76  39  25  38 
-
-VALEURS votes VERTS/100
