@@ -43,7 +43,9 @@ def getData(filePath):
                 l = int(cleanLine[0])
                 h = int(cleanLine[1].replace("/n", ""))
             else:
-                cleanLine.pop()
+                
+                if(len(cleanLine) > l):
+                    cleanLine.pop()
                 tempArray = []
                 for i in range(0, len(cleanLine)):
                     cleanLine[i] = int(cleanLine[i])
@@ -132,7 +134,8 @@ def printConfig() :
             string = string + str(configurations[i][j]["x"]) + ' ' + str(configurations[i][j]["y"]) + ' '
         
         print(string, flush=True)
-    print(' ', flush=True)
+    print("")
+    # print(' ', flush=True)
 
 # Aller chercher la meilleure configuration
 for k in range(len(configurations)) :
