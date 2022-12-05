@@ -34,3 +34,37 @@ n=50
 78  41  96  11  33  95  76  39  25  38 
 
 VALEURS votes VERTS/100
+
+
+
+
+matrix [][] = dataset
+
+pour i in col_exemplaire
+    pour j in rang_exemplaire
+        si respecte distance manhathan
+            ajouter la municapilite a la position [i][j] dans la circonscription
+        si circonscription est complete
+            ajouter circonscription au tableau des configurations
+
+
+pour k in configurations
+    pour l in configurations
+
+        si votes_circonscription_k < votes_circonscription_l
+            si votes_circonscription_k < minimum_votes_victoire ET votes_circonscription_l < minimum_votes_victoire
+                pour municapilite_k in configurations[k]
+                    pour municipalite_l in configurations[l]
+                        si votes_municapilite_k > votes_municapilite_l ET votes_circonscription_l <= minimum_votes_victoire
+                            echanger municapilite_k et municipalite_l si les deux respectent la distance de manhathan dans leur circonscription
+        sinon
+            si votes_circonscription_k > minimum_votes_victoire ET votes_circonscription_l < minimum_votes_victoire
+                pour municapilite_k in configurations[k]
+                        pour municipalite_l in configurations[l]
+                            si votes_municapilite_k > votes_municapilite_l ET votes_circonscription_l <= minimum_votes_victoire ET votes_circonscription_k > minimum_votes_victoire
+                                echanger municapilite_k et municipalite_l si les deux respectent la distance de manhathan dans leur circonscription
+
+
+
+
+
