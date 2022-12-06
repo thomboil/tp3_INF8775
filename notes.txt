@@ -64,7 +64,8 @@ pour k in configurations
                             si votes_municapilite_k > votes_municapilite_l ET votes_circonscription_l <= minimum_votes_victoire ET votes_circonscription_k > minimum_votes_victoire
                                 echanger municapilite_k et municipalite_l si les deux respectent la distance de manhathan dans leur circonscription
 
-
+cmd qui marche
+(timeout 180s sh tp.sh -e "exemplaires/10_20_0.txt" -c 10 -p; exit 0) | python ./check_sol.py -e "exemplaires/10_20_0.txt" -c 10 -s "sortie.out"
 
 
 

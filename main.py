@@ -1,9 +1,6 @@
 import math
 import argparse
 
-import sys
-sys.stdout.flush()
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-e', action='store', const='NoValue', nargs='?')
@@ -69,6 +66,12 @@ def isMunicipalityValid(circonscriptionArray, newMinicipality, manhathanLimit):
                 isValid = False
                 break
     return isValid
+
+def findNextStartPoint(visited, usableMatrix) :
+    for i in range(len(usableMatrix)) :
+        for j in range(len(usableMatrix[i])) :
+            if usableMatrix[i][j] not in visited :
+                return usableMatrix[i][j]
     
 # Initialiser les variables necessaires au probleme 
 filePath, nbCirconscription, printArg = getArguments()
@@ -79,6 +82,7 @@ nbMuni = int(l*h) #n
 nbCircon = int(nbCirconscription) #m
 
 manhathanLimit = math.ceil(nbMuni/(2*nbCircon))
+#anhathanLimit = 9
 
 k_min = math.floor(nbMuni/nbCircon)
 k_max = math.ceil(nbMuni/nbCircon)
@@ -88,24 +92,79 @@ circonscriptionSize = k_min
 configurations = []
 temp_circonscription = []
 
-for i in range(h):
-    for j in range(l):
+
+usableMatrix = []
+
+for i in range(h) :
+    row = []
+    for j in range(l) :
         new_point = {
-                "x": j,
-                "y": i,
-                "votes": matrix[i][j]
-            }
+            "x": j,
+            "y": i,
+            "votes": matrix[i][j]
+        }
+        row.append(new_point)
+    usableMatrix.append(row)
 
-        if len(temp_circonscription) == 0:
-            temp_circonscription.append(new_point)
-        else:
-            if isMunicipalityValid(temp_circonscription, new_point, manhathanLimit):
-                temp_circonscription.append(new_point)
+visited = []
 
-        # Si la circonscription est plein, on l'ajoute au tableau 
-        if len(temp_circonscription) == circonscriptionSize:
-            configurations.append(temp_circonscription)
-            temp_circonscription = []
+while len(configurations) < nbCircon :
+        firestFreeMunicipality = findNextStartPoint(visited, usableMatrix)
+        
+        
+        x = firestFreeMunicipality["x"]
+        y = firestFreeMunicipality["y"]
+
+        temp_circonscription.append(firestFreeMunicipality)
+        
+        for i in range(x - 5, x + 5) :
+            for j in range(y - 5, y + 5) :
+                if i >= 0 and j >= 0 and j < h and i < l :
+                    if isMunicipalityValid(temp_circonscription, usableMatrix[i][j], manhathanLimit) and usableMatrix[i][j] not in visited:
+                        visited.append(usableMatrix[i][j]) 
+                        temp_circonscription.append(usableMatrix[i][j])
+
+                    if len(temp_circonscription) == circonscriptionSize:
+                        configurations.append(temp_circonscription)
+                        temp_circonscription = []
+                        break
+
+
+#while len(usableMatrix) != 0 :
+#    left = 0
+#    for w in range(len(usableMatrix)):
+#        left = left + len(usableMatrix[w])
+#
+#    print(left)
+#    toRemove = [] 
+#    
+#    for i in range(len(usableMatrix)):
+#
+#        for j in range(len(usableMatrix[i])):
+#            
+#            if len(temp_circonscription) == 0:
+#                toRemove.append(usableMatrix[i][j])
+#                temp_circonscription.append(usableMatrix[i][j])
+#            else:
+#                if isMunicipalityValid(temp_circonscription, usableMatrix[i][j], manhathanLimit):
+#                    toRemove.append(usableMatrix[i][j])
+#                    temp_circonscription.append(usableMatrix[i][j])
+#
+#            # Si la circonscription est plein, on l'ajoute au tableau 
+#            if len(temp_circonscription) == circonscriptionSize:
+#                configurations.append(temp_circonscription)
+#                temp_circonscription = []
+#                break;
+#
+#    for point in toRemove :
+#        for i in range(len(usableMatrix)) :
+#            if point in usableMatrix[i] :
+#                print(point)
+#                usableMatrix[i].remove(point)
+#    
+#    if left == 0:
+#        break
+
 
 votesArray = []
 index = 0
@@ -131,10 +190,9 @@ def printConfig() :
     for i in range(len(configurations)) :
         string = ''
         for j in range(len(configurations[i])) :
-            string = string + str(configurations[i][j]["x"]) + ' ' + str(configurations[i][j]["y"]) + ' '
-        
-        print(string, flush=True)
-    print("")
+            string = string + str(configurations[i][j]["y"]) + " " + str(configurations[i][j]["x"]) + " "
+        print(string)
+    print(' ',flush=True)
     # print(' ', flush=True)
 
 # Aller chercher la meilleure configuration
@@ -150,6 +208,8 @@ for k in range(len(configurations)) :
                             if configurations[k][i]["votes"] > configurations[l][j]["votes"] and votesArray[l] < minVotesToWin :
                                 if isMunicipalityValid(configurations[k], configurations[l][j], manhathanLimit) and isMunicipalityValid(configurations[l], configurations[k][i], manhathanLimit) :
                                     
+                                    print('hahaha')
+
                                     temp = configurations[k][i]
                                     configurations[k][i] = configurations[l][j]
                                     configurations[l][j] = temp
@@ -207,8 +267,6 @@ for k in range(len(configurations)) :
                                         if nbCirconWon < newNbCirconWon :
                                             printConfig()
                                             nbCirconWon = newNbCirconWon
-
-
 
 # if printArg:
 #     displayArray = []
